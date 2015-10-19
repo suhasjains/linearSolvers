@@ -5,12 +5,12 @@ int main()
 {
 
 	double  **a;
-	double *u;
-	double *c;
-	int x=100;
-	int y=100;
-	int i,j;	
-	double e,eMax,tmp1,tmp2;
+	double *u,*v,*c;
+	int x=10;
+	int y=10;
+	int i,j, counter = 1;	
+	double e,tmp1,tmp2,m=0;
+	double eMax=1;
 
 	//dynamically allocate the variables
 	a = new double*[x];
@@ -19,13 +19,15 @@ int main()
 	}
 	u = new double[x];	
 	c = new double[x];	
+	v = new double[x];
 
 	//assign values for A matrix
 	for(i=0;i<x;i++){
 		for(j=0;j<y;j++){
-			if(i==j) a[i][j] = 1;
+			if(i==j) a[i][j] = 5;
 		}
-		c[i] = 500;
+		c[i] = 100;
+		v[i] = 0;
 	}
 
 	/*
@@ -37,23 +39,25 @@ int main()
 
 	
 	//performing jacobi iterations
-	while(eMax > pow(10,-5)){
-		e = 0;
-		for(i=0;i<x;i++){
-			tmp1 = u[i];
-			u[i]=0;	
-			for(j=0;j<y;j++){
-				if(i!=j) u[i] += a[i][j]*u[i];
-			}	
-			u[i] = (c[i] - u[i])/a[i][i];
-			tmp2 = e;
-			e = u[i] - tmp1;
-			if(e>tmp2) eMax = e; 
-		}
-	}
 	
-	for(i=0;i<x;i++){
-		printf("c[%d] = %lf\n",i,c[i]);
+	while(counter<=3){
+//	while(eMax > pow(10,-5)){
+		e = 0;
+		for(i=0;i<x;i++){	
+			m=0;
+			for(j=0;j<y;j++){
+				if(i!=j) m = m + a[i][j]*v[i];
+			}	
+			u[i] = (c[i] - m)/a[i][i];
+			tmp1 = e;
+			e = u[i] - v[i];
+			if(e>eMax) eMax = e;
+			v[i]=u[i]; 
+		}
+		for(i=0;i<x;i++){
+			printf("u[%d] = %lf\n",i,u[i]);
+		}
+	counter += 1;
 	}
 	
 }
