@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <math.h>
+	
+	static double *u,*v;
+	static int x=10;
+	static int y=10;
+
+int jacobi(double **a,double *c);
 
 int main()
 {
-
 	double  **a;
-	double *u,*v,*c;
-	int x=10;
-	int y=10;
-	int i,j, counter = 1;	
-	double e,tmp1,tmp2,m=0;
-	double eMax=1;
+	double *c;
+	int i,j,counter;
 
 	//dynamically allocate the variables
 	a = new double*[x];
@@ -26,8 +27,7 @@ int main()
 		for(j=0;j<y;j++){
 			if(i==j) a[i][j] = 5;
 		}
-		c[i] = 100;
-		v[i] = 0;
+		c[i] = 100*i;
 	}
 
 	/*
@@ -39,27 +39,36 @@ int main()
 
 	
 	//performing jacobi iterations
+	counter = jacobi(a,c);
 	
-	while(counter<=3){
-//	while(eMax > pow(10,-5)){
-		e = 0;
+
+	//printing output
+	for(i=0;i<x;i++){	
+		printf("u[%d] = %lf\n",i,u[i]);
+	}
+	printf("Number of iterations = %d\n",counter-1);
+}
+
+int jacobi(double **a,double *c){
+
+	double e,eMax = 1,m;
+	int i,j,counter=1;
+ 	
+	while(eMax > pow(10,-5)){
+		eMax = e = 0;
 		for(i=0;i<x;i++){	
 			m=0;
 			for(j=0;j<y;j++){
 				if(i!=j) m = m + a[i][j]*v[i];
 			}	
 			u[i] = (c[i] - m)/a[i][i];
-			tmp1 = e;
 			e = u[i] - v[i];
 			if(e>eMax) eMax = e;
 			v[i]=u[i]; 
 		}
-		for(i=0;i<x;i++){
-			printf("u[%d] = %lf\n",i,u[i]);
-		}
 	counter += 1;
-	}
+	}	
 	
+	return counter;
 }
-
 	
